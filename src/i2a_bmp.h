@@ -3,6 +3,9 @@
 
 #include <stdlib.h>
 
+#define I2A_BMP_HEAD_SIZE 14u
+#define I2A_BMP_INFO_SIZE 40u
+
 /* 32 bit RGBA (4bytes/pixel) */
 #define I2A_ARR_TYPE_RGBA32 0x01u
 /* 32 bit BGRA (4bytes/pixel) */
@@ -21,6 +24,12 @@
 #define I2A_ARR_TYPE_GRAY8 0x08u
 /* 1bit line art (1bit/pixel) */
 #define I2A_ARR_TYPE_BIT 0x09u
+
+/* 像素点的位数 常用值是1（双色灰阶）、4（16色灰阶）、8（256色灰阶）和24（彩色） */
+#define I2A_BMP_BIT_CNT_1 1u
+#define I2A_BMP_BIT_CNT_4 4u
+#define I2A_BMP_BIT_CNT_8 8u
+#define I2A_BMP_BIT_CNT_24 24u
 
 /* #pragma pack(1)  // 强制1个字节对齐 */
 
@@ -57,7 +66,9 @@ typedef struct {
 
 typedef struct {
     char arr_type;
-    uint16_t bmp_bit_cnt;
+    /* uint16_t bmp_bit_cnt; */
+    i2a_bmp_head_t bmp_head;
+    i2a_bmp_info_t bmp_info;
 } i2a_bmp_conf_t;
 
 typedef struct {
@@ -66,10 +77,11 @@ typedef struct {
     char type;
 } i2a_array_t;
 
-i2a_bmp_t *i2a_load_bmp(const char *file_path);
 void i2a_free(i2a_bmp_t *bmp);
+i2a_bmp_t *i2a_load_bmp(const char *file_path);
+int write_bmp_file(const char *file_path, i2a_bmp_t *bmp);
 
-int i2a_bmp2array(const i2a_bmp_t *bmp, const i2a_bmp_conf_t *conf, i2a_array_t *arr);
-int i2a_array2bmp(const i2a_array_t *arr, const i2a_bmp_conf_t *conf, i2a_bmp_t *bmp);
+int i2a_bmp_to_array(const i2a_bmp_t *bmp, const i2a_bmp_conf_t *conf, i2a_array_t *arr);
+int i2a_array_to_bmp(const i2a_array_t *arr, const i2a_bmp_conf_t *conf, i2a_bmp_t *bmp);
 
 #endif /* I2A_BMP_H */

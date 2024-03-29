@@ -153,25 +153,15 @@ static int bmp_to_rgb16(const i2a_bmp_t *bmp, i2a_array_t *arr) {
             uint32_t c = 0;
             memcpy(&c, p + i, b_cnt);
             c &= 0x00FFFFFFu;
-            /* printf("c:0x%04x\n", c); */
             unsigned char r = (c & 0x00FF0000u) >> 16;
             unsigned char g = (c & 0x0000FF00u) >> 8;
             unsigned char b = c & 0x000000FFu;
-            /* printf("r:0x%04x g:0x%04x b:0x%04x \n", r, g, b); */
 
             uint16_t r_new = r * 0x20u / 0x100u;
             uint16_t g_new = g * 0x40u / 0x100u;
             uint16_t b_new = b * 0x20u / 0x100u;
-            /* printf("r_new:0x%04x g_new:0x%04x b_new:0x%04x \n", r_new, g_new, b_new);
-            printf("r_new1:0x%04x g_new1:0x%04x b_new1:0x%04x \n", ((r_new << 11) & 0xF800u), ((g_new << 5) & 0x07E0u),
-                   (b_new & 0x001Fu)); */
-
             uint16_t c_new = ((r_new << 11) & 0xF800u) | ((g_new << 5) & 0x07E0u) | (b_new & 0x001Fu);
             arr->arr[j] = c_new;
-            /* printf("j: %d, c_new:0x%04x, rgb16:0x%04x\n", j, c_new, arr->arr[j].rgb16); */
-            /* if (i == 3) {
-                return 1;
-            } */
         }
     }
     assert(arr->arr_len == j);
@@ -185,13 +175,12 @@ static int rgb16_to_bmp(const i2a_array_t *arr, /* const i2a_bmp_conf_t *conf, *
     }
 
     int len = arr->arr_len;
-    uint16_t *p = (uint16_t *)arr->arr;
-    /* printf("arr_len:%d \n", len); */
-
+    uint32_t *p = arr->arr;
     bmp->data_len = len * 3;
     bmp->data = (unsigned char *)malloc(bmp->data_len);
-    /* bmp->head = conf->bmp_head;
-    bmp->info = conf->bmp_info; */
+    if (!bmp->data) {
+        printf("out of memory.\n");
+    }
 
     int i, j = 0;
     for (i = 0; i < len; i++) {
@@ -201,14 +190,14 @@ static int rgb16_to_bmp(const i2a_array_t *arr, /* const i2a_bmp_conf_t *conf, *
         r = r * 0x100u / 0x20u;
         g = g * 0x100u / 0x40u;
         b = b * 0x100u / 0x20u;
-        bmp->data[j++] = r;
-        bmp->data[j++] = g;
-        bmp->data[j++] = b;
+        unsigned int c = (r << 16) | (g << 8) | b;
+        memcpy(bmp->data + j, &c, 3);
+        j += 3;
 
-        /* unsigned int c = (r << 16) | (g << 8) | b;
-        if (i == 0) {
-            printf("r:%02x, r:%02x, r:%02x, c:%06x, qr:%02x \n", r, g, b, c, p[i]);
-        } */
+        /* TODO: big or little endian? */
+        /* bmp->data[j++] = r;
+        bmp->data[j++] = g;
+        bmp->data[j++] = b; */
     }
     assert(bmp->data_len == j);
 
@@ -257,7 +246,7 @@ int i2a_array_to_bmp(const i2a_array_t *arr, const i2a_bmp_conf_t *conf, i2a_bmp
         p += sizeof((_v_param_item));                         \
     } while (0)
 
-int write_bmp_file(const char *file_path, i2a_bmp_t *bmp) {
+int i2a_write_bmp_file(const char *file_path, const i2a_bmp_t *bmp) {
     if (!file_path || !bmp || !bmp->data || bmp->data_len <= 0) {
         return 0;
     }
@@ -273,7 +262,6 @@ int write_bmp_file(const char *file_path, i2a_bmp_t *bmp) {
     char *p = buf;
     /* TODO: big or little endian? */
 
-    /* _WRITE_BMP_HEAD_INFO_ITEM(bmp->head.type); */
     memcpy(p, bmp->head.type, sizeof(bmp->head.type));
     p += sizeof(bmp->head.type);
 
@@ -295,14 +283,17 @@ int write_bmp_file(const char *file_path, i2a_bmp_t *bmp) {
 
     int cnt1 = fwrite(buf, 1, sizeof(buf), fp);
     _LOG("write BMP head and info %d", cnt1);
-    /* TODO: check error */
-    /* if (cnt1 != sizeof(buf)) {
-        _LOG
-    } */
+    if (cnt1 != sizeof(buf)) {
+        _LOG("write BMP head and info error %s", file_path);
+        return 0;
+    }
 
     int cnt2 = fwrite(bmp->data, 1, bmp->data_len, fp);
     _LOG("write BMP data %d", cnt2);
-    /* TODO: check error */
+    if (cnt2 != bmp->data_len) {
+        _LOG("write BMP data error %s", file_path);
+        return 0;
+    }
 
     fclose(fp);
     return cnt1 + cnt2;

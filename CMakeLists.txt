@@ -14,11 +14,11 @@ include_directories(${PROJECT_SOURCE_DIR}/src/)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src DIR_SRCS)
 
 # ############# main #############
-add_executable(i2a ${DIR_SRCS} ${DIR_SRCS_CJSON})
+add_executable(i2a ${DIR_SRCS})
 
 # ############# static #############
-# add_executable(i2a ${DIR_SRCS} ${DIR_SRCS_CJSON})
+# add_executable(i2a ${DIR_SRCS})
 
 # ############# sharded lib #############
 # list(REMOVE_ITEM DIR_SRCS ${PROJECT_SOURCE_DIR}/src/i2a.c)
-# add_library(libi2a SHARED ${DIR_SRCS} ${DIR_SRCS_CJSON})
+# add_library(libi2a SHARED ${DIR_SRCS})

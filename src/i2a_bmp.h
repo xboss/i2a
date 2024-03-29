@@ -25,10 +25,13 @@
 /* 1bit line art (1bit/pixel) */
 #define I2A_ARR_TYPE_BIT 0x09u
 
-/* 像素点的位数 常用值是1（双色灰阶）、4（16色灰阶）、8（256色灰阶）和24（彩色） */
+/* 像素点的位数 1（双色灰阶） */
 #define I2A_BMP_BIT_CNT_1 1u
+/* 像素点的位数 4（16色灰阶） */
 #define I2A_BMP_BIT_CNT_4 4u
+/* 像素点的位数 8（256色灰阶)  */
 #define I2A_BMP_BIT_CNT_8 8u
+/* 像素点的位数 24（彩色） */
 #define I2A_BMP_BIT_CNT_24 24u
 
 /* #pragma pack(1)  // 强制1个字节对齐 */
@@ -79,7 +82,7 @@ typedef struct {
 
 void i2a_free(i2a_bmp_t *bmp);
 i2a_bmp_t *i2a_load_bmp(const char *file_path);
-int write_bmp_file(const char *file_path, i2a_bmp_t *bmp);
+int i2a_write_bmp_file(const char *file_path, const i2a_bmp_t *bmp);
 
 int i2a_bmp_to_array(const i2a_bmp_t *bmp, const i2a_bmp_conf_t *conf, i2a_array_t *arr);
 int i2a_array_to_bmp(const i2a_array_t *arr, const i2a_bmp_conf_t *conf, i2a_bmp_t *bmp);

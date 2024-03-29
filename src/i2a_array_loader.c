@@ -52,7 +52,6 @@ static void next(array_ctx_t *ctx) {
     assert(ctx->src);
     assert(ctx->src_len > 0);
 
-    uint32_t val = 0;
     int hex_val_idx = 0, len = 0;
     while (ctx->src_len > 0) {
         if (ctx->is_comment_line) {
@@ -216,7 +215,7 @@ int i2a_load_array(const char *file_path, const int arr_size, uint32_t **arr) {
         return -1;
     }
 
-    const int buf_sz = 1; /* TODO: */
+    const int buf_sz = 1024 * 4; /* TODO: */
     char buf[buf_sz + 1];
     memset(buf, 0, buf_sz + 1);
 
@@ -232,8 +231,8 @@ int i2a_load_array(const char *file_path, const int arr_size, uint32_t **arr) {
     int r = 0;
     while (!feof(fp)) {
         r = fread(buf, sizeof(char), buf_sz, fp);
-        printf("read size:%d\n", r);
-        printf("buf:%s\n", buf);
+        /*         printf("read size:%d\n", r);
+                printf("buf:%s\n", buf); */
         if (r <= 0) {
             break;
         }
@@ -245,10 +244,10 @@ int i2a_load_array(const char *file_path, const int arr_size, uint32_t **arr) {
         memset(buf, 0, buf_sz + 1);
     }
 
-    /* printf("buf size:%d read size:%d src size:%lu\n", src_sz, r, strlen(src)); */
-    /* printf("%d\n", feof(fp)); */
-
     fclose(fp);
+
+    /* printf("arr size:%d arr len:%d\n", arr_size, arr_ctx.arr_len); */
+    assert(arr_size == arr_ctx.arr_len);
 
     *arr = arr_ctx.arr;
     return arr_ctx.arr_len;

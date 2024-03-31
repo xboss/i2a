@@ -1,7 +1,7 @@
 #ifndef _I2A_BMP_H
 #define _I2A_BMP_H
 
-#include <stdlib.h>
+#include <stdint.h>
 
 #define I2A_BMP_HEAD_SIZE 14u
 #define I2A_BMP_INFO_SIZE 40u

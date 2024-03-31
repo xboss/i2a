@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 /* "0x12345678" */
@@ -222,7 +223,7 @@ int i2a_load_array(const char *file_path, const int arr_size, uint32_t **arr) {
     array_ctx_t arr_ctx;
     memset(&arr_ctx, 0, sizeof(arr_ctx));
     arr_ctx.arr_len = arr_size;
-    arr_ctx.arr = (uint32_t *)malloc(arr_ctx.arr_len);
+    arr_ctx.arr = (uint32_t *)malloc(arr_ctx.arr_len * sizeof(uint32_t));
     if (!arr_ctx.arr) {
         perror("out of memory.");
         return -1;

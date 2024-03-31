@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "i2a_array_loader.h"
@@ -146,14 +147,14 @@ int main(int argc, char const *argv[]) {
     const char *mode = argv[1];
     const char *file_path = argv[2];
     char arr_type = 0x00u;
-    if (strncasecmp("rgb16", argv[3], 6) == 0) {
+    if (strncmp("rgb16", argv[3], 6) == 0) {
         arr_type = I2A_ARR_TYPE_RGB16;
     }
 
     uint32_t width = 0u, height = 0u;
     uint16_t bit_cnt = 0u;
     int r;
-    if (strncasecmp("a2b", mode, 4) == 0) {
+    if (strncmp("a2b", mode, 4) == 0) {
         if (argc < 7) {
             printf("%s\n", usage);
             return 1;
@@ -161,13 +162,13 @@ int main(int argc, char const *argv[]) {
 
         width = atoi(argv[4]);
         height = atoi(argv[5]);
-        if (strncasecmp("1", argv[6], 4) == 0) {
+        if (strncmp("1", argv[6], 4) == 0) {
             bit_cnt = I2A_BMP_BIT_CNT_1;
-        } else if (strncasecmp("16", argv[6], 4) == 0) {
+        } else if (strncmp("16", argv[6], 4) == 0) {
             bit_cnt = I2A_BMP_BIT_CNT_4;
-        } else if (strncasecmp("256", argv[6], 4) == 0) {
+        } else if (strncmp("256", argv[6], 4) == 0) {
             bit_cnt = I2A_BMP_BIT_CNT_8;
-        } else if (strncasecmp("24", argv[6], 4) == 0) {
+        } else if (strncmp("24", argv[6], 4) == 0) {
             bit_cnt = I2A_BMP_BIT_CNT_24;
         } else {
             printf("unsupported color depth.\n");
@@ -178,7 +179,7 @@ int main(int argc, char const *argv[]) {
             printf("ERROR: Convert C array file to BMP file.\n");
             return 1;
         }
-    } else if (strncasecmp("b2a", mode, 4) == 0) {
+    } else if (strncmp("b2a", mode, 4) == 0) {
         bmp2arr(file_path, arr_type);
     } else {
         printf("%s\n", usage);

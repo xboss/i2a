@@ -24,6 +24,8 @@
 
 #define _RESET_ARR_CTX_TMP_BUF memset(ctx->tmp_buf, 0, _TMP_BUF_SZ)
 
+#define _ARRAY_BUF_SZ (1024 * 4)
+
 typedef struct {
     char *src;
     int src_len;
@@ -216,9 +218,9 @@ int i2a_load_array(const char *file_path, const int arr_size, uint32_t **arr) {
         return -1;
     }
 
-    const int buf_sz = 1024 * 4; /* TODO: */
-    char buf[buf_sz + 1];
-    memset(buf, 0, buf_sz + 1);
+    /* const int buf_sz = 1024 * 4; TODO: */
+    char buf[_ARRAY_BUF_SZ + 1];
+    memset(buf, 0, _ARRAY_BUF_SZ + 1);
 
     array_ctx_t arr_ctx;
     memset(&arr_ctx, 0, sizeof(arr_ctx));
@@ -231,7 +233,7 @@ int i2a_load_array(const char *file_path, const int arr_size, uint32_t **arr) {
 
     int r = 0;
     while (!feof(fp)) {
-        r = fread(buf, sizeof(char), buf_sz, fp);
+        r = fread(buf, sizeof(char), _ARRAY_BUF_SZ, fp);
         /*         printf("read size:%d\n", r);
                 printf("buf:%s\n", buf); */
         if (r <= 0) {
@@ -242,7 +244,7 @@ int i2a_load_array(const char *file_path, const int arr_size, uint32_t **arr) {
         arr_ctx.src_len = r;
         next(&arr_ctx);
 
-        memset(buf, 0, buf_sz + 1);
+        memset(buf, 0, _ARRAY_BUF_SZ + 1);
     }
 
     fclose(fp);
